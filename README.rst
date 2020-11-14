@@ -9,7 +9,7 @@ Installation
 --------------------
 ::
 
-    pip install mysocketctl
+    pip3 install mysocketctl
 
 Authors
 --------------------
