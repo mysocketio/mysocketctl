@@ -8,7 +8,7 @@ setup(
     version='0.1',
     description="CLI tool for mysocket.io",
     long_description=open("README.rst").read(),
-    url="https://github.com/atoonk/mysocketctl",
+    url="https://github.com/mysocketio/mysocketctl",
     author="Andree Toonk",
     author_email="andree@mysocket.io",
     install_requires=[
