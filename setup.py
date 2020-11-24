@@ -12,7 +12,7 @@ setup(
     author="Andree Toonk",
     author_email="andree@mysocket.io",
     install_requires=[
-        'Click','requests','pyjwt','prettytable'
+        'Click','requests','pyjwt','prettytable', 'paramiko'
     ],
     classifiers=[
         "Intended Audience :: Developers",

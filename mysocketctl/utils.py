@@ -3,11 +3,12 @@ import json
 import os
 import requests
 import sys
-import subprocess
 import jwt
 import time, sys
 
 from prettytable import PrettyTable
+
+from mysocketctl.ssh import SystemSSH, Paramiko
 
 api_url = "https://api.mysocket.io/"
 token_file = os.path.expanduser(os.path.join("~", ".mysocketio_token"))
@@ -96,38 +97,15 @@ def validate_response(http_repsonse):
 
 
 def ssh_tunnel(port,remote_bind_port,ssh_server,ssh_user):
-    ssh_cmd = (
-        "ssh",
-        "-R",
-        str(remote_bind_port) + ":localhost:" + str(port),
-        "-l",
-        ssh_user,
-        "-o",
-        "StrictHostKeyChecking=no",
-        "-o",
-        "UserKnownHostsFile=/dev/null",
-        "-o",
-        "ExitOnForwardFailure=yes",
-        "-o",
-        "PasswordAuthentication=no",
-        "-o",
-        "ServerAliveInterval=30",
-        "-o",
-        "LogLevel=ERROR",
-        str(ssh_server),
-    )
     print("\nConnecting to Server: " + ssh_server + "\n")
-    if debug == True:
-        print(ssh_cmd)
 
     while True:
         try:
-            cmd_output = subprocess.run(
-                ssh_cmd,
-                # stdout=subprocess.STDOUT,
-                # stderr=subprocess.STDOUT,
-                # universal_newlines=False,
-            )
+            for ssh in [SystemSSH, Paramiko]:
+                client = ssh()
+                if client.is_enabled():
+                    client.connect(port,remote_bind_port,ssh_server,ssh_user)
+                    break
         except KeyboardInterrupt:
             print("Bye")
             return
