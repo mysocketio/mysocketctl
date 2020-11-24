@@ -70,9 +70,10 @@ def connect(port, name, protected, username, password, type):
             sys.exit(1)
     if not name:
         name = "Local port " + str(port)
-    if type not in ["http", "https", "tcp", "tls"]:
+    if type.lower() not in ["http", "https", "tcp", "tls"]:
         print("--type should be either http, https, tcp or tls")
         sys.exit(1)
+    type = type.lower()
 
     authorization_header = get_auth_header()
     new_conn = new_connection(
@@ -115,7 +116,7 @@ def connect(port, name, protected, username, password, type):
         print(protectedtable)
 
     time.sleep(2)
-    ssh_tunnel(str(port),str(remote_bind_port),str(ssh_server),ssh_user)
+    ssh_tunnel(str(port), str(remote_bind_port), str(ssh_server), ssh_user)
     print("cleaning up...")
     delete_socket(authorization_header, new_conn["socket_id"])
     sys.exit()
