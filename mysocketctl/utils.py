@@ -10,7 +10,7 @@ import time, sys
 from prettytable import PrettyTable
 
 api_url = "https://api.mysocket.io/"
-token_file = os.environ["HOME"] + "/.mysocketio_token"
+token_file = os.path.expanduser(os.path.join("~", ".mysocketio_token"))
 
 
 # For debug
