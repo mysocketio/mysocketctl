@@ -12,11 +12,11 @@ class SystemSSH(object):
             pass
         return False
 
-    def connect(self, port,remote_bind_port,ssh_server,ssh_user):
+    def connect(self, port,remote_bind_port,ssh_server,ssh_user, client_host="localhost"):
         ssh_cmd = (
             self.ssh_path,
             "-R",
-            str(remote_bind_port) + ":localhost:" + str(port),
+            str(remote_bind_port) + ":" + client_host + ":" + str(port),
             "-l",
             ssh_user,
             "-o",

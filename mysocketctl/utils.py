@@ -94,27 +94,3 @@ def validate_response(http_repsonse):
         print(http_repsonse.status_code, http_repsonse.text)
 
     sys.exit(1)
-
-
-def ssh_tunnel(port,remote_bind_port,ssh_server,ssh_user):
-    print("\nConnecting to Server: " + ssh_server + "\n")
-
-    while True:
-        try:
-            for ssh in [SystemSSH, Paramiko]:
-                client = ssh()
-                if client.is_enabled():
-                    client.connect(port,remote_bind_port,ssh_server,ssh_user)
-                    break
-        except KeyboardInterrupt:
-            print("Bye")
-            return
-
-
-        try:
-            print("Disconnected... Automatically reconnecting now..")
-            print("Press ctrl-c to exit")
-            time.sleep(2)
-        except KeyboardInterrupt:
-            print("Bye")
-            return

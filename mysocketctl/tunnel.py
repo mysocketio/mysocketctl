@@ -102,8 +102,40 @@ def delete(socket_id,tunnel_id):
 @click.option("--socket_id", required=True, type=str)
 @click.option("--tunnel_id", required=True, type=str)
 @click.option("--port", required=True, type=str)
-def connect(socket_id, tunnel_id,port):
+@click.option("--host", hidden=True, type=str, default="localhost")
+@click.option("--engine", default="auto", type=click.Choice(("auto", "system", "paramiko")))
+def connect(socket_id, tunnel_id, port, engine, host):
     authorization_header = get_auth_header()
     tunnel = get_tunnel_info(authorization_header, socket_id,tunnel_id)
     ssh_username = get_ssh_username(authorization_header)
-    ssh_tunnel(port,tunnel["local_port"],"ssh.mysocket.io",ssh_username)
+    ssh_server = "ssh.mysocket.io"
+    print("\nConnecting to Server: " + ssh_server + "\n")
+
+    while True:
+        if engine == "auto":
+            for ssh in [SystemSSH, Paramiko]:
+                client = ssh()
+                if ssh().is_enabled():
+                    break
+        elif engine == "system":
+            client = SystemSSH()
+            if not SystemSSH().is_enabled():
+                print("System SSH does not appear to be avaiable")
+                return
+        elif engine == "paramiko":
+            client = Paramiko()
+
+        try:
+            client.connect(port,tunnel["local_port"],ssh_server,ssh_username, host)
+        except KeyboardInterrupt:
+            print("Bye")
+            return
+
+
+        try:
+            print("Disconnected... Automatically reconnecting now..")
+            print("Press ctrl-c to exit")
+            time.sleep(2)
+        except KeyboardInterrupt:
+            print("Bye")
+            return

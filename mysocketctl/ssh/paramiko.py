@@ -28,16 +28,19 @@ class Paramiko(object):
 
         while True:
             r, w, x = select.select([sock, chan], [], [])
-            if sock in r:
-                data = sock.recv(1024)
-                if len(data) == 0:
-                    break
-                chan.send(data)
-            if chan in r:
-                data = chan.recv(1024)
-                if len(data) == 0:
-                    break
-                sock.send(data)
+            try:
+                if sock in r:
+                    data = sock.recv(1024)
+                    if len(data) == 0:
+                        break
+                    chan.send(data)
+                if chan in r:
+                    data = chan.recv(1024)
+                    if len(data) == 0:
+                        break
+                    sock.send(data)
+            except (EOFError, OSError) as e:
+                break
         chan.close()
         sock.close()
 
@@ -74,13 +77,20 @@ class Paramiko(object):
         writer.start()
 
 
-    def connect(self, port,remote_bind_port,ssh_server,ssh_user):
-        self.client.connect(ssh_server, username=ssh_user)
+    def connect(self, port,remote_bind_port,ssh_server,ssh_user,client_host="localhost"):
+        try:
+            self.client.connect(ssh_server, username=ssh_user, timeout=10)
+        except Exception as e:
+            print("Couldn't connect %s" % e)
+            self.client.close()
+            return
         self.client.get_transport().set_keepalive(30)
         self.print_logs()
 
         # This enters an infinite loop, so anything important must happen before this
         try:
-            self.reverse_forward_tunnel(remote_bind_port, "localhost", int(port))
+            self.reverse_forward_tunnel(remote_bind_port, client_host, int(port))
         except KeyboardInterrupt:
             self.client.close()
+        except Exception as e:
+            print("Connection error %s" % e)
