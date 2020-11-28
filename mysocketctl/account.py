@@ -1,9 +1,13 @@
+import json
+import os
 import click
+import requests
+
 from mysocketctl.utils import *
 
 
 @click.group()
-def account():
+def account():  # pragma: no cover
     """Create a new account or see account information."""
     pass
 
@@ -38,7 +42,7 @@ def create_account(name, email, password, sshkey):
 @click.option(
     "--sshkey",
     required=True,
-    help='your public sshkey as a string, or use:                   --sshkey "$(cat ~/.ssh/id_rsa.pub)"',
+    help="your public sshkey as a string or the path to your ssh public key",
 )
 def create(name, email, password, sshkey):
     """Create your new mysocket.io account"""
@@ -47,11 +51,9 @@ def create(name, email, password, sshkey):
             with open(sshkey, "r") as fp:
                 sshkey = fp.read()
     except PermissionError:
-        print(
-            f"Unable to read the file {sshkey}, please check file permissions and try again."
-        )
+        print(f"Unable to read the file {sshkey}, please check file permissions and try again.")
         return
-    register_result = create_account(name, email, password, sshkey)
+    create_account(name, email, password, sshkey)
     print(
         "Congratulation! your account has been created. A confirmation email has been sent to "
         + email

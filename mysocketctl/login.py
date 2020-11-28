@@ -1,10 +1,12 @@
+import json
 import click
+import requests
 
 from mysocketctl.utils import *
 
 
 @click.group()
-def login():
+def login():  # pragma: no cover
     pass
 
 

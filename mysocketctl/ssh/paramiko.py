@@ -38,7 +38,7 @@ class Paramiko(object):
                     if len(data) == 0:
                         break
                     sock.send(data)
-            except (EOFError, OSError) as e:
+            except (EOFError, OSError):
                 break
         chan.close()
         sock.close()
@@ -60,9 +60,7 @@ class Paramiko(object):
             chan = transport.accept(1000)
             if chan is None:
                 continue
-            thr = threading.Thread(
-                target=Paramiko.handler, args=(chan, remote_host, remote_port)
-            )
+            thr = threading.Thread(target=Paramiko.handler, args=(chan, remote_host, remote_port))
             thr.setDaemon(True)
             thr.start()
 
@@ -72,9 +70,7 @@ class Paramiko(object):
         writer.setDaemon(True)
         writer.start()
 
-    def connect(
-        self, port, remote_bind_port, ssh_server, ssh_user, client_host="localhost"
-    ):
+    def connect(self, port, remote_bind_port, ssh_server, ssh_user, client_host="localhost"):
         try:
             self.client.connect(ssh_server, username=ssh_user, timeout=10)
         except Exception as e:

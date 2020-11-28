@@ -1,10 +1,12 @@
+import json
 import click
+import requests
 
 from mysocketctl.utils import *
 
 
 @click.group()
-def socket():
+def socket():  # pragma: no cover
     """Manage your global sockets"""
     pass
 
@@ -23,11 +25,6 @@ def new_socket(
     protected_pass,
     socket_type,
 ):
-    if not protected_socket:
-        protected_socket = False
-    else:
-        protected_socket = True
-
     params = {
         "name": connect_name,
         "protected_socket": protected_socket,
@@ -43,9 +40,7 @@ def new_socket(
 
 
 def delete_socket(authorization_header, socket_id):
-    api_answer = requests.delete(
-        f"{api_url}socket/{socket_id}", headers=authorization_header
-    )
+    api_answer = requests.delete(f"{api_url}socket/{socket_id}", headers=authorization_header)
     validate_response(api_answer)
     return api_answer
 

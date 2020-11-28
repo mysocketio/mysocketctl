@@ -1,5 +1,7 @@
 from setuptools import setup, find_packages
 
+test_deps = ["brunette", "coverage", "flake8", "httmock", "tox"]
+
 setup(
     name="mysocketctl",
     packages=find_packages(),
@@ -13,6 +15,10 @@ setup(
     author_email="andree@mysocket.io",
     install_requires=["Click", "requests", "pyjwt", "prettytable", "paramiko"],
     python_requires=">=3.6",
+    extras_requires={
+        "test": test_deps,
+    },
+    test_requires=test_deps,
     classifiers=[
         "Intended Audience :: Developers",
         "License :: OSI Approved :: Apache Software License",

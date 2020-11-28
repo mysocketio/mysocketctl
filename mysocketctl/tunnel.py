@@ -1,10 +1,12 @@
+import json
 import click
+import requests
 
 from mysocketctl.utils import *
 
 
 @click.group()
-def tunnel():
+def tunnel():  # pragma: no cover
     """Manage your tunnels"""
     pass
 
@@ -18,9 +20,7 @@ def get_ssh_username(authorization_header):
 
 
 def get_tunnels(authorization_header, socket_id):
-    api_answer = requests.get(
-        f"{api_url}socket/{socket_id}/tunnel", headers=authorization_header
-    )
+    api_answer = requests.get(f"{api_url}socket/{socket_id}/tunnel", headers=authorization_header)
     validate_response(api_answer)
     return api_answer.json()
 
@@ -56,9 +56,7 @@ def delete_tunnel(authorization_header, socket_id, tunnel_id):
 
 
 def print_tunnels(tunnels, socket_id):
-    table = PrettyTable(
-        field_names=["socket_id", "tunnel_id", "tunnel_server", "relay_port"]
-    )
+    table = PrettyTable(field_names=["socket_id", "tunnel_id", "tunnel_server", "relay_port"])
     table.align = "l"
     table.border = True
 
@@ -103,9 +101,7 @@ def delete(socket_id, tunnel_id):
 @click.option("--tunnel_id", required=True, type=str)
 @click.option("--port", required=True, type=str)
 @click.option("--host", hidden=True, type=str, default="localhost")
-@click.option(
-    "--engine", default="auto", type=click.Choice(("auto", "system", "paramiko"))
-)
+@click.option("--engine", default="auto", type=click.Choice(("auto", "system", "paramiko")))
 def connect(socket_id, tunnel_id, port, engine, host):
     authorization_header = get_auth_header()
     tunnel = get_tunnel_info(authorization_header, socket_id, tunnel_id)

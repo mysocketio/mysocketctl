@@ -17,9 +17,7 @@ class SystemSSH(object):
             pass
         return False
 
-    def connect(
-        self, port, remote_bind_port, ssh_server, ssh_user, client_host="localhost"
-    ):
+    def connect(self, port, remote_bind_port, ssh_server, ssh_user, client_host="localhost"):
         ssh_cmd = (
             self.ssh_path,
             "-R",
@@ -41,9 +39,4 @@ class SystemSSH(object):
             str(ssh_server),
         )
 
-        cmd_output = subprocess.run(
-            ssh_cmd,
-            # stdout=subprocess.STDOUT,
-            # stderr=subprocess.STDOUT,
-            # universal_newlines=False,
-        )
+        subprocess.run(ssh_cmd)

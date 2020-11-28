@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 import click
 
+# Import sub commands from commands
+from mysocketctl.account import account
+from mysocketctl.login import login
+from mysocketctl.connect import connect
+from mysocketctl.socket import socket
+from mysocketctl.tunnel import tunnel
+
 
 @click.group()
 def cli():
     pass
 
-
-# Import sub commands from commands
-from .account import account
-from .login import login
-from .connect import connect
-from .socket import socket
-from .tunnel import tunnel
 
 cli.add_command(account, "account")
 cli.add_command(login, "login")
