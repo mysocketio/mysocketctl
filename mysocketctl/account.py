@@ -33,7 +33,7 @@ def create_account(name, email, password, sshkey):
 @account.command()
 @click.option("--name", required=True, help="your name")
 @click.option("--email", required=True, help="your email")
-@click.option("--password", required=True, help="your pasword")
+@click.password_option("--password", required=True, help="your pasword")
 @click.option(
     "--sshkey",
     required=True,
