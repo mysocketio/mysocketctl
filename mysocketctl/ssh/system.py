@@ -1,7 +1,8 @@
 import subprocess
 
+
 class SystemSSH(object):
-    def __init__(self, path='ssh'):
+    def __init__(self, path="ssh"):
         self.ssh_path = path
 
     def is_enabled(self):
@@ -12,7 +13,9 @@ class SystemSSH(object):
             pass
         return False
 
-    def connect(self, port,remote_bind_port,ssh_server,ssh_user, client_host="localhost"):
+    def connect(
+        self, port, remote_bind_port, ssh_server, ssh_user, client_host="localhost"
+    ):
         ssh_cmd = (
             self.ssh_path,
             "-R",

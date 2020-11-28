@@ -2,6 +2,7 @@ import click
 
 from mysocketctl.utils import *
 
+
 @click.group()
 def login():
     pass

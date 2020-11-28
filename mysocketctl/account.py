@@ -1,6 +1,7 @@
 import click
 from mysocketctl.utils import *
 
+
 @click.group()
 def account():
     """Create a new account or see account information."""

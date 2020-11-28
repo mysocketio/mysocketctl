@@ -14,14 +14,12 @@ from .connect import connect
 from .socket import socket
 from .tunnel import tunnel
 
-cli.add_command(account,'account')
-cli.add_command(login,'login')
-cli.add_command(connect,'connect')
-cli.add_command(socket,'socket')
-cli.add_command(tunnel,'tunnel')
-
+cli.add_command(account, "account")
+cli.add_command(login, "login")
+cli.add_command(connect, "connect")
+cli.add_command(socket, "socket")
+cli.add_command(tunnel, "tunnel")
 
 
 if __name__ == "__main__":
     cli()
-

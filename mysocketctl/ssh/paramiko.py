@@ -6,15 +6,14 @@ import threading
 from paramiko import SSHClient
 from paramiko.client import AutoAddPolicy
 
+
 class Paramiko(object):
     def __init__(self):
         self.client = SSHClient()
         self.client.set_missing_host_key_policy(AutoAddPolicy)
 
-
     def is_enabled(self):
         return True
-
 
     @staticmethod
     def handler(chan, host, port):
@@ -44,7 +43,6 @@ class Paramiko(object):
         chan.close()
         sock.close()
 
-
     @staticmethod
     def write_logs(sock):
         while True:
@@ -54,7 +52,6 @@ class Paramiko(object):
                 break
             sys.stdout.write(data.decode("UTF-8"))
             sys.stdout.flush()
-
 
     def reverse_forward_tunnel(self, server_port, remote_host, remote_port):
         transport = self.client.get_transport()
@@ -69,15 +66,15 @@ class Paramiko(object):
             thr.setDaemon(True)
             thr.start()
 
-
     def print_logs(self):
         chan = self.client.invoke_shell()
         writer = threading.Thread(target=Paramiko.write_logs, args=(chan,))
         writer.setDaemon(True)
         writer.start()
 
-
-    def connect(self, port,remote_bind_port,ssh_server,ssh_user,client_host="localhost"):
+    def connect(
+        self, port, remote_bind_port, ssh_server, ssh_user, client_host="localhost"
+    ):
         try:
             self.client.connect(ssh_server, username=ssh_user, timeout=10)
         except Exception as e:
