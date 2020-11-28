@@ -9,7 +9,7 @@ def account():
 
 
 def show_account(authorization_header, user_id):
-    api_answer = requests.get(api_url + "user/" + user_id, headers=authorization_header)
+    api_answer = requests.get(f"{api_url}user/{user_id}", headers=authorization_header)
     validate_response(api_answer)
     return api_answer.json()
 
@@ -47,7 +47,9 @@ def create(name, email, password, sshkey):
             with open(sshkey, "r") as fp:
                 sshkey = fp.read()
     except PermissionError:
-        print("Unable to read the file %s, please check file permissions and try again." % sshkey)
+        print(
+            f"Unable to read the file {sshkey}, please check file permissions and try again."
+        )
         return
     register_result = create_account(name, email, password, sshkey)
     print(
@@ -57,7 +59,7 @@ def create(name, email, password, sshkey):
     print(
         "Please complete the account registration by following the confirmation link in your email."
     )
-    print("After that login with login --email '" + email + "' --password '*****'")
+    print(f"After that login with login --email '{email}' --password '*****'")
 
 
 @account.command()

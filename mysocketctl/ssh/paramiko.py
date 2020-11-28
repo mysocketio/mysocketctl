@@ -21,7 +21,7 @@ class Paramiko(object):
         try:
             sock.connect((host, port))
         except Exception as e:
-            sys.stderr.write("Forwarding request to %s:%d failed: %r" % (host, port, e))
+            sys.stderr.write(f"Forwarding request to {host}:{port} failed: {e}")
             sys.stderr.flush()
             return
 
@@ -78,7 +78,7 @@ class Paramiko(object):
         try:
             self.client.connect(ssh_server, username=ssh_user, timeout=10)
         except Exception as e:
-            print("Couldn't connect %s" % e)
+            print(f"Couldn't connect {e}")
             self.client.close()
             return
         self.client.get_transport().set_keepalive(30)
@@ -90,4 +90,4 @@ class Paramiko(object):
         except KeyboardInterrupt:
             self.client.close()
         except Exception as e:
-            print("Connection error %s" % e)
+            print(f"Connection error {e}")

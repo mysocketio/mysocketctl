@@ -38,7 +38,7 @@ def new_connection(
 
 def delete_socket(authorization_header, socket_id):
     api_answer = requests.delete(
-        api_url + "socket/" + socket_id, headers=authorization_header
+        f"{api_url}socket/{socket_id}", headers=authorization_header
     )
     validate_response(api_answer)
     return api_answer
@@ -69,7 +69,7 @@ def connect(port, name, protected, username, password, type):
             print("--password required when using --protected")
             sys.exit(1)
     if not name:
-        name = "Local port " + str(port)
+        name = f"Local port {port}"
     if type.lower() not in ["http", "https", "tcp", "tls"]:
         print("--type should be either http, https, tcp or tls")
         sys.exit(1)

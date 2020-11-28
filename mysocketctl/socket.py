@@ -44,7 +44,7 @@ def new_socket(
 
 def delete_socket(authorization_header, socket_id):
     api_answer = requests.delete(
-        api_url + "socket/" + socket_id, headers=authorization_header
+        f"{api_url}socket/{socket_id}", headers=authorization_header
     )
     validate_response(api_answer)
     return api_answer
@@ -151,4 +151,4 @@ def create(name, protected, username, password, type):
 def delete(socket_id):
     authorization_header = get_auth_header()
     delete_socket(authorization_header, socket_id)
-    print("Socket " + socket_id + " deleted")
+    print(f"Socket {socket_id} deleted")

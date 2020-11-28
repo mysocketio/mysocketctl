@@ -19,7 +19,7 @@ class SystemSSH(object):
         ssh_cmd = (
             self.ssh_path,
             "-R",
-            str(remote_bind_port) + ":" + client_host + ":" + str(port),
+            f"{remote_bind_port}:{client_host}:{port}",
             "-l",
             ssh_user,
             "-o",

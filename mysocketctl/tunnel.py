@@ -11,7 +11,7 @@ def tunnel():
 
 def get_ssh_username(authorization_header):
     user_id = get_user_id()
-    api_answer = requests.get(api_url + "user/" + user_id, headers=authorization_header)
+    api_answer = requests.get(f"{api_url}user/{user_id}", headers=authorization_header)
     validate_response(api_answer)
     data = api_answer.json()
     return data["user_name"]
@@ -19,7 +19,7 @@ def get_ssh_username(authorization_header):
 
 def get_tunnels(authorization_header, socket_id):
     api_answer = requests.get(
-        api_url + "socket/" + socket_id + "/tunnel", headers=authorization_header
+        f"{api_url}socket/{socket_id}/tunnel", headers=authorization_header
     )
     validate_response(api_answer)
     return api_answer.json()
@@ -27,7 +27,7 @@ def get_tunnels(authorization_header, socket_id):
 
 def get_tunnel_info(authorization_header, socket_id, tunnel_id):
     api_answer = requests.get(
-        api_url + "socket/" + socket_id + "/tunnel/" + tunnel_id,
+        f"{api_url}socket/{socket_id}/tunnel/{tunnel_id}",
         headers=authorization_header,
     )
     validate_response(api_answer)
@@ -38,7 +38,7 @@ def new_tunnel(authorization_header, socket_id):
 
     params = {}
     api_answer = requests.post(
-        api_url + "socket/" + socket_id + "/tunnel",
+        f"{api_url}socket/{socket_id}/tunnel",
         data=json.dumps(params),
         headers=authorization_header,
     )
@@ -48,7 +48,7 @@ def new_tunnel(authorization_header, socket_id):
 
 def delete_tunnel(authorization_header, socket_id, tunnel_id):
     api_answer = requests.delete(
-        api_url + "socket/" + socket_id + "/tunnel/" + tunnel_id,
+        f"{api_url}socket/{socket_id}/tunnel/{tunnel_id}",
         headers=authorization_header,
     )
     validate_response(api_answer)
@@ -104,8 +104,8 @@ def create(socket_id):
 @click.option("--tunnel_id", required=True, type=str)
 def delete(socket_id, tunnel_id):
     authorization_header = get_auth_header()
-    print("Tunnel " + tunnel_id + " deleted")
     delete_tunnel(authorization_header, socket_id, tunnel_id)
+    print(f"Tunnel {tunnel_id} deleted")
 
 
 @tunnel.command()
@@ -121,7 +121,7 @@ def connect(socket_id, tunnel_id, port, engine, host):
     tunnel = get_tunnel_info(authorization_header, socket_id, tunnel_id)
     ssh_username = get_ssh_username(authorization_header)
     ssh_server = "ssh.mysocket.io"
-    print("\nConnecting to Server: " + ssh_server + "\n")
+    print(f"\nConnecting to Server: {ssh_server}\n")
 
     while True:
         if engine == "auto":
