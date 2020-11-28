@@ -126,15 +126,14 @@ def ssh_tunnel(port, remote_bind_port, ssh_server, ssh_username, host="localhost
             print("Bye")
             return
 
-def print_socket(socket, protected, username, password):
+def print_sockets(sockets):
     table = PrettyTable()
 
     table.align = "l"
     table.border = True
-    ports_str = listToStr = " ".join([str(elem) for elem in socket["socket_tcp_ports"]])
     table.field_names = ["socket_id", "dns_name", "port(s)", "type", "name"]
-    if type in ["tcp", "tls"]:
-        tcp_ports = socket["socket_tcp_ports"]
+    for socket in sockets:
+        ports_str = " ".join([str(elem) for elem in socket["socket_tcp_ports"]])
         row = [
             socket["socket_id"],
             socket["dnsname"],
@@ -142,17 +141,11 @@ def print_socket(socket, protected, username, password):
             socket["socket_type"],
             socket["name"],
         ]
-    else:
-        row = [
-            socket["socket_id"],
-            socket["dnsname"],
-            ports_str,
-            socket["socket_type"],
-            socket["name"],
-        ]
+        table.add_row(row)
 
-    table.add_row(row)
     print(table)
+
+def print_protected(username, password):
     if protected:
         protectedtable = PrettyTable(field_names=["username", "password"])
         protectedtable.align = "l"

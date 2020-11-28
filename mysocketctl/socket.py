@@ -52,28 +52,9 @@ def delete_socket(authorization_header, socket_id):
 
 @socket.command()
 def ls():
-    table = PrettyTable(
-        field_names=["socket_id", "dns_name", "type", "port(s)", "name"]
-    )
-    table.align = "l"
-    table.border = True
-
     authorization_header = get_auth_header()
     sockets = get_sockets(authorization_header)
-    for socket in sockets:
-        ports_str = listToStr = " ".join(
-            [str(elem) for elem in socket["socket_tcp_ports"]]
-        )
-        row = [
-            socket["socket_id"],
-            socket["dnsname"],
-            socket["socket_type"],
-            ports_str,
-            socket["name"],
-        ]
-        table.add_row(row)
-    print(table)
-
+    print_sockets(sockets)
 
 @socket.command()
 @click.option("--name", required=True, type=str)
@@ -102,9 +83,9 @@ def create(name, protected, username, password, type):
         authorization_header, name, protected, str(username), str(password), str(type)
     )
 
-    ssh_server = "ssh.mysocket.io"
-
-    print_socket(socket, protected, username, password)
+    print_sockets([socket])
+    if protected:
+        print_protected(username, password)
 
 
 @socket.command()
