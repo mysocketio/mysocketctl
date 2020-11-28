@@ -77,7 +77,6 @@ def ls():
 
 @socket.command()
 @click.option("--name", required=True, type=str)
-@click.option("--protected", required=False, type=str, default="")
 @click.option("--protected/--not-protected", default=False)
 @click.option("--username", required=False, type=str, default="")
 @click.option("--password", required=False, type=str, default="")
@@ -111,39 +110,7 @@ def create(name, protected, username, password, type):
 
     ssh_server = "ssh.mysocket.io"
 
-    table = PrettyTable()
-
-    table.align = "l"
-    table.border = True
-    ports_str = listToStr = " ".join([str(elem) for elem in socket["socket_tcp_ports"]])
-    table.field_names = ["socket_id", "dns_name", "port(s)", "type", "name"]
-    if type in ["tcp", "tls"]:
-        tcp_ports = socket["socket_tcp_ports"]
-        row = [
-            socket["socket_id"],
-            socket["dnsname"],
-            ports_str,
-            socket["socket_type"],
-            socket["name"],
-        ]
-    else:
-        row = [
-            socket["socket_id"],
-            socket["dnsname"],
-            ports_str,
-            socket["socket_type"],
-            socket["name"],
-        ]
-
-    table.add_row(row)
-    print(table)
-    if protected:
-        protectedtable = PrettyTable(field_names=["username", "password"])
-        protectedtable.align = "l"
-        protectedtable.border = True
-        protectedtable.add_row([str(username), str(password)])
-        print("\nProtected Socket, login details:")
-        print(protectedtable)
+    print_socket(socket, protected, username, password)
 
 
 @socket.command()

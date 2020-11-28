@@ -1,5 +1,6 @@
 import click
 
+import mysocketctl.socket
 from mysocketctl.utils import *
 
 
@@ -36,18 +37,9 @@ def new_connection(
     return api_answer.json()
 
 
-def delete_socket(authorization_header, socket_id):
-    api_answer = requests.delete(
-        f"{api_url}socket/{socket_id}", headers=authorization_header
-    )
-    validate_response(api_answer)
-    return api_answer
-
-
 @connect.command()
 @click.option("--port", required=True, type=int, help="Local port to connect")
 @click.option("--name", required=False, type=str, default="")
-@click.option("--protected", required=False, type=str, default="")
 @click.option("--protected/--not-protected", default=False)
 @click.option("--username", required=False, type=str, default="")
 @click.option("--password", required=False, type=str, default="")
@@ -58,7 +50,8 @@ def delete_socket(authorization_header, socket_id):
     default="http",
     help="Socket type, http, https, tcp, tls",
 )
-def connect(port, name, protected, username, password, type):
+@click.pass_context
+def connect(ctx, port, name, protected, username, password, type):
     """Quckly connect, Wrapper around sockets and tunnels"""
 
     if protected:
@@ -84,39 +77,9 @@ def connect(port, name, protected, username, password, type):
     ssh_server = "ssh.mysocket.io"
     ssh_user = str(new_conn["user_name"])
 
-    table = PrettyTable()
-
-    table.align = "l"
-    table.border = True
-    if type in ["tcp", "tls"]:
-        table.field_names = ["socket_id", "dns_name", "tcp port", "name"]
-        tcp_ports = new_conn["socket_tcp_ports"]
-        row = [
-            new_conn["socket_id"],
-            new_conn["dnsname"],
-            tcp_ports[0],
-            new_conn["name"],
-        ]
-    else:
-        table.field_names = ["socket_id", "dns_name", "name"]
-        row = [
-            new_conn["socket_id"],
-            new_conn["dnsname"],
-            new_conn["name"],
-        ]
-
-    table.add_row(row)
-    print(table)
-    if protected:
-        protectedtable = PrettyTable(field_names=["username", "password"])
-        protectedtable.align = "l"
-        protectedtable.border = True
-        protectedtable.add_row([str(username), str(password)])
-        print("\nProtected Socket, login details:")
-        print(protectedtable)
+    print_socket(new_conn, protected, username, password)
 
     time.sleep(2)
-    ssh_tunnel(str(port), str(remote_bind_port), str(ssh_server), ssh_user)
+    ssh_tunnel(port, remote_bind_port, ssh_server, ssh_user)
     print("cleaning up...")
-    delete_socket(authorization_header, new_conn["socket_id"])
-    sys.exit()
+    ctx.invoke(mysocketctl.socket.delete, socket_id=new_conn["socket_id"])

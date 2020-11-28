@@ -94,3 +94,70 @@ def validate_response(http_repsonse):
         print(http_repsonse.status_code, http_repsonse.text)
 
     sys.exit(1)
+
+#ssh_tunnel(str(port), str(remote_bind_port), str(ssh_server), ssh_user)
+def ssh_tunnel(port, remote_bind_port, ssh_server, ssh_username, host="localhost", engine="auto"):
+    print(f"\nConnecting to Server: {ssh_server}\n")
+
+    while True:
+        if engine == "auto":
+            for ssh in [SystemSSH, Paramiko]:
+                client = ssh()
+                if ssh().is_enabled():
+                    break
+        elif engine == "system":
+            client = SystemSSH()
+            if not SystemSSH().is_enabled():
+                print("System SSH does not appear to be avaiable")
+                return
+        elif engine == "paramiko":
+            client = Paramiko()
+
+        try:
+            client.connect(port, remote_bind_port, ssh_server, ssh_username, host)
+        except KeyboardInterrupt:
+            print("Bye")
+            return
+
+        try:
+            print("Disconnected... Automatically reconnecting now..")
+            print("Press ctrl-c to exit")
+            time.sleep(2)
+        except KeyboardInterrupt:
+            print("Bye")
+            return
+
+def print_socket(socket, protected, username, password):
+    table = PrettyTable()
+
+    table.align = "l"
+    table.border = True
+    ports_str = listToStr = " ".join([str(elem) for elem in socket["socket_tcp_ports"]])
+    table.field_names = ["socket_id", "dns_name", "port(s)", "type", "name"]
+    if type in ["tcp", "tls"]:
+        tcp_ports = socket["socket_tcp_ports"]
+        row = [
+            socket["socket_id"],
+            socket["dnsname"],
+            ports_str,
+            socket["socket_type"],
+            socket["name"],
+        ]
+    else:
+        row = [
+            socket["socket_id"],
+            socket["dnsname"],
+            ports_str,
+            socket["socket_type"],
+            socket["name"],
+        ]
+
+    table.add_row(row)
+    print(table)
+    if protected:
+        protectedtable = PrettyTable(field_names=["username", "password"])
+        protectedtable.align = "l"
+        protectedtable.border = True
+        protectedtable.add_row([str(username), str(password)])
+        print("\nProtected Socket, login details:")
+        print(protectedtable)

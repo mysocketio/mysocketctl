@@ -121,32 +121,5 @@ def connect(socket_id, tunnel_id, port, engine, host):
     tunnel = get_tunnel_info(authorization_header, socket_id, tunnel_id)
     ssh_username = get_ssh_username(authorization_header)
     ssh_server = "ssh.mysocket.io"
-    print(f"\nConnecting to Server: {ssh_server}\n")
 
-    while True:
-        if engine == "auto":
-            for ssh in [SystemSSH, Paramiko]:
-                client = ssh()
-                if ssh().is_enabled():
-                    break
-        elif engine == "system":
-            client = SystemSSH()
-            if not SystemSSH().is_enabled():
-                print("System SSH does not appear to be avaiable")
-                return
-        elif engine == "paramiko":
-            client = Paramiko()
-
-        try:
-            client.connect(port, tunnel["local_port"], ssh_server, ssh_username, host)
-        except KeyboardInterrupt:
-            print("Bye")
-            return
-
-        try:
-            print("Disconnected... Automatically reconnecting now..")
-            print("Press ctrl-c to exit")
-            time.sleep(2)
-        except KeyboardInterrupt:
-            print("Bye")
-            return
+    ssh_tunnel(port, tunnel["local_port"], ssh_server, ssh_username, host, engine)
