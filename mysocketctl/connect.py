@@ -59,11 +59,9 @@ def connect(ctx, port, name, protected, username, password, type, engine):
 
     if protected:
         if not username:
-            print("--username required when using --protected")
-            sys.exit(1)
+            ctx.fail("--username required when using --protected")
         if not password:
-            print("--password required when using --protected")
-            sys.exit(1)
+            ctx.fail("--password required when using --protected")
     if not name:
         name = f"Local port {port}"
 

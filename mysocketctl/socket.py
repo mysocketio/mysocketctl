@@ -69,15 +69,14 @@ def ls():
     default="http",
     help="Socket type, http, https, tcp, tls",
 )
-def create(name, protected, username, password, type):
+@click.pass_context
+def create(ctx, name, protected, username, password, type):
 
     if protected:
         if not username:
-            print("--username required when using --protected")
-            sys.exit(1)
+            ctx.fail("--username required when using --protected")
         if not password:
-            print("--password required when using --protected")
-            sys.exit(1)
+            ctx.fail("--password required when using --protected")
 
     authorization_header = get_auth_header()
     socket = new_socket(
