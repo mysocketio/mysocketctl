@@ -76,7 +76,7 @@ def connect(ctx, port, name, protected, username, password, type, engine):
     ssh_server = "ssh.mysocket.io"
     ssh_user = str(new_conn["user_name"])
 
-    print_socket([new_conn])
+    print_sockets([new_conn])
     if protected:
         print_protected(username, password)
 
