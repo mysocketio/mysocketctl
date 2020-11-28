@@ -54,18 +54,13 @@ def delete_tunnel(authorization_header, socket_id, tunnel_id):
     validate_response(api_answer)
     return api_answer
 
-
-@tunnel.command()
-@click.option("--socket_id", required=True, type=str)
-def ls(socket_id):
+def print_tunnels(tunnels, socket_id):
     table = PrettyTable(
         field_names=["socket_id", "tunnel_id", "tunnel_server", "relay_port"]
     )
     table.align = "l"
     table.border = True
 
-    authorization_header = get_auth_header()
-    tunnels = get_tunnels(authorization_header, socket_id)
     for tunnel in tunnels:
         row = [
             socket_id,
@@ -79,24 +74,18 @@ def ls(socket_id):
 
 @tunnel.command()
 @click.option("--socket_id", required=True, type=str)
+def ls(socket_id):
+    authorization_header = get_auth_header()
+    tunnels = get_tunnels(authorization_header, socket_id)
+    print_tunnels(tunnels, socket_id)
+
+
+@tunnel.command()
+@click.option("--socket_id", required=True, type=str)
 def create(socket_id):
     authorization_header = get_auth_header()
     tunnel = new_tunnel(authorization_header, socket_id)
-    table = PrettyTable(
-        field_names=["socket_id", "tunnel_id", "tunnel_server", "relay_port"]
-    )
-    table.align = "l"
-    table.border = True
-
-    authorization_header = get_auth_header()
-    row = [
-        socket_id,
-        tunnel["tunnel_id"],
-        tunnel["tunnel_server"],
-        tunnel["local_port"],
-    ]
-    table.add_row(row)
-    print(table)
+    print_tunnels([tunnel], socket_id)
 
 
 @tunnel.command()
