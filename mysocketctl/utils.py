@@ -95,7 +95,6 @@ def validate_response(http_repsonse):
 
     sys.exit(1)
 
-#ssh_tunnel(str(port), str(remote_bind_port), str(ssh_server), ssh_user)
 def ssh_tunnel(port, remote_bind_port, ssh_server, ssh_username, host="localhost", engine="auto"):
     print(f"\nConnecting to Server: {ssh_server}\n")
 

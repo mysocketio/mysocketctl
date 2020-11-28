@@ -50,8 +50,11 @@ def new_connection(
     default="http",
     help="Socket type, http, https, tcp, tls",
 )
+@click.option(
+    "--engine", default="auto", type=click.Choice(("auto", "system", "paramiko"))
+)
 @click.pass_context
-def connect(ctx, port, name, protected, username, password, type):
+def connect(ctx, port, name, protected, username, password, type, engine):
     """Quckly connect, Wrapper around sockets and tunnels"""
 
     if protected:
@@ -80,6 +83,6 @@ def connect(ctx, port, name, protected, username, password, type):
     print_socket(new_conn, protected, username, password)
 
     time.sleep(2)
-    ssh_tunnel(port, remote_bind_port, ssh_server, ssh_user)
+    ssh_tunnel(port, remote_bind_port, ssh_server, ssh_user, engine=engine)
     print("cleaning up...")
     ctx.invoke(mysocketctl.socket.delete, socket_id=new_conn["socket_id"])
