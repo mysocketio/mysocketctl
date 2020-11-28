@@ -41,6 +41,13 @@ def create_account(name, email, password, sshkey):
 )
 def create(name, email, password, sshkey):
     """Create your new mysocket.io account"""
+    try:
+        if os.path.exists(sshkey):
+            with open(sshkey, "r") as fp:
+                sshkey = fp.read()
+    except PermissionError:
+        print("Unable to read the file %s, please check file permissions and try again." % sshkey)
+        return
     register_result = create_account(name, email, password, sshkey)
     print(
         "Congratulation! your account has been created. A confirmation email has been sent to "
