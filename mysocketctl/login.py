@@ -2,6 +2,7 @@ import click
 
 from mysocketctl.utils import *
 
+
 @click.group()
 def login():
     pass
@@ -32,4 +33,4 @@ def login(email, password):
     f = open(token_file, "w")
     f.write(token)
     f.close()
-    print("Logged in! Token stored in " + token_file + "\n")
+    print(f"Logged in! Token stored in {token_file}\n")

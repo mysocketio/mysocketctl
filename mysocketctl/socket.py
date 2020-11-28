@@ -44,7 +44,7 @@ def new_socket(
 
 def delete_socket(authorization_header, socket_id):
     api_answer = requests.delete(
-        api_url + "socket/" + socket_id, headers=authorization_header
+        f"{api_url}socket/{socket_id}", headers=authorization_header
     )
     validate_response(api_answer)
     return api_answer
@@ -52,39 +52,19 @@ def delete_socket(authorization_header, socket_id):
 
 @socket.command()
 def ls():
-    table = PrettyTable(
-        field_names=["socket_id", "dns_name", "type", "port(s)", "name"]
-    )
-    table.align = "l"
-    table.border = True
-
     authorization_header = get_auth_header()
     sockets = get_sockets(authorization_header)
-    for socket in sockets:
-        ports_str = listToStr = " ".join(
-            [str(elem) for elem in socket["socket_tcp_ports"]]
-        )
-        row = [
-            socket["socket_id"],
-            socket["dnsname"],
-            socket["socket_type"],
-            ports_str,
-            socket["name"],
-        ]
-        table.add_row(row)
-    print(table)
-
+    print_sockets(sockets)
 
 @socket.command()
 @click.option("--name", required=True, type=str)
-@click.option("--protected", required=False, type=str, default="")
 @click.option("--protected/--not-protected", default=False)
 @click.option("--username", required=False, type=str, default="")
 @click.option("--password", required=False, type=str, default="")
 @click.option(
     "--type",
     required=False,
-    type=str,
+    type=click.Choice(["http", "https", "tcp", "tls"], case_sensitive=False),
     default="http",
     help="Socket type, http, https, tcp, tls",
 )
@@ -97,53 +77,15 @@ def create(name, protected, username, password, type):
         if not password:
             print("--password required when using --protected")
             sys.exit(1)
-    if not name:
-        name = ""
-    if type.lower() not in ["http", "https", "tcp", "tls"]:
-        print("--type should be either http, https, tcp or tls")
-        sys.exit(1)
-    type = type.lower()
 
     authorization_header = get_auth_header()
     socket = new_socket(
         authorization_header, name, protected, str(username), str(password), str(type)
     )
 
-    ssh_server = "ssh.mysocket.io"
-
-    table = PrettyTable()
-
-    table.align = "l"
-    table.border = True
-    ports_str = listToStr = " ".join([str(elem) for elem in socket["socket_tcp_ports"]])
-    table.field_names = ["socket_id", "dns_name", "port(s)", "type", "name"]
-    if type in ["tcp", "tls"]:
-        tcp_ports = socket["socket_tcp_ports"]
-        row = [
-            socket["socket_id"],
-            socket["dnsname"],
-            ports_str,
-            socket["socket_type"],
-            socket["name"],
-        ]
-    else:
-        row = [
-            socket["socket_id"],
-            socket["dnsname"],
-            ports_str,
-            socket["socket_type"],
-            socket["name"],
-        ]
-
-    table.add_row(row)
-    print(table)
+    print_sockets([socket])
     if protected:
-        protectedtable = PrettyTable(field_names=["username", "password"])
-        protectedtable.align = "l"
-        protectedtable.border = True
-        protectedtable.add_row([str(username), str(password)])
-        print("\nProtected Socket, login details:")
-        print(protectedtable)
+        print_protected(username, password)
 
 
 @socket.command()
@@ -151,4 +93,4 @@ def create(name, protected, username, password, type):
 def delete(socket_id):
     authorization_header = get_auth_header()
     delete_socket(authorization_header, socket_id)
-    print("Socket " + socket_id + " deleted")
+    print(f"Socket {socket_id} deleted")

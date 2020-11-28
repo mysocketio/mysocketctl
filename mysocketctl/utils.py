@@ -3,11 +3,12 @@ import json
 import os
 import requests
 import sys
-import subprocess
 import jwt
 import time, sys
 
 from prettytable import PrettyTable
+
+from mysocketctl.ssh import SystemSSH, Paramiko
 
 api_url = "https://api.mysocket.io/"
 token_file = os.path.expanduser(os.path.join("~", ".mysocketio_token"))
@@ -36,7 +37,7 @@ def get_user_id():
                 try:
                     data = jwt.decode(token, verify=False)
                 except:
-                    print("barf on " + token)
+                    print(f"barf on {token}")
                     data = jwt.decode(token, verify=False)
                     continue
 
@@ -47,7 +48,7 @@ def get_user_id():
         print("Could not read file:", token_file)
         print("Please login again")
         sys.exit(1)
-    print("No valid token in " + token_file + ". Please login again")
+    print("No valid token in {token_file}. Please login again")
 
 
 def get_auth_header():
@@ -59,7 +60,7 @@ def get_auth_header():
                 try:
                     data = jwt.decode(token, verify=False)
                 except:
-                    print("barf on " + token)
+                    print("barf on {token}")
                     data = jwt.decode(token, verify=False)
                     continue
 
@@ -73,7 +74,7 @@ def get_auth_header():
         print("Could not read file:", token_file)
         print("Please login again")
         sys.exit(1)
-    print("No valid token in " + token_file + ". Please login again")
+    print("No valid token in {token_file}. Please login again")
     sys.exit(1)
 
 
@@ -94,44 +95,28 @@ def validate_response(http_repsonse):
 
     sys.exit(1)
 
-
-def ssh_tunnel(port,remote_bind_port,ssh_server,ssh_user):
-    ssh_cmd = (
-        "ssh",
-        "-R",
-        str(remote_bind_port) + ":localhost:" + str(port),
-        "-l",
-        ssh_user,
-        "-o",
-        "StrictHostKeyChecking=no",
-        "-o",
-        "UserKnownHostsFile=/dev/null",
-        "-o",
-        "ExitOnForwardFailure=yes",
-        "-o",
-        "PasswordAuthentication=no",
-        "-o",
-        "ServerAliveInterval=30",
-        "-o",
-        "LogLevel=ERROR",
-        str(ssh_server),
-    )
-    print("\nConnecting to Server: " + ssh_server + "\n")
-    if debug == True:
-        print(ssh_cmd)
+def ssh_tunnel(port, remote_bind_port, ssh_server, ssh_username, host="localhost", engine="auto"):
+    print(f"\nConnecting to Server: {ssh_server}\n")
 
     while True:
+        if engine == "auto":
+            for ssh in [SystemSSH, Paramiko]:
+                client = ssh()
+                if ssh().is_enabled():
+                    break
+        elif engine == "system":
+            client = SystemSSH()
+            if not SystemSSH().is_enabled():
+                print("System SSH does not appear to be avaiable")
+                return
+        elif engine == "paramiko":
+            client = Paramiko()
+
         try:
-            cmd_output = subprocess.run(
-                ssh_cmd,
-                # stdout=subprocess.STDOUT,
-                # stderr=subprocess.STDOUT,
-                # universal_newlines=False,
-            )
+            client.connect(port, remote_bind_port, ssh_server, ssh_username, host)
         except KeyboardInterrupt:
             print("Bye")
             return
-
 
         try:
             print("Disconnected... Automatically reconnecting now..")
@@ -140,3 +125,30 @@ def ssh_tunnel(port,remote_bind_port,ssh_server,ssh_user):
         except KeyboardInterrupt:
             print("Bye")
             return
+
+def print_sockets(sockets):
+    table = PrettyTable()
+
+    table.align = "l"
+    table.border = True
+    table.field_names = ["socket_id", "dns_name", "port(s)", "type", "name"]
+    for socket in sockets:
+        ports_str = " ".join([str(elem) for elem in socket["socket_tcp_ports"]])
+        row = [
+            socket["socket_id"],
+            socket["dnsname"],
+            ports_str,
+            socket["socket_type"],
+            socket["name"],
+        ]
+        table.add_row(row)
+
+    print(table)
+
+def print_protected(username, password):
+    protectedtable = PrettyTable(field_names=["username", "password"])
+    protectedtable.align = "l"
+    protectedtable.border = True
+    protectedtable.add_row([str(username), str(password)])
+    print("\nProtected Socket, login details:")
+    print(protectedtable)
