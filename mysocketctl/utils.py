@@ -146,10 +146,9 @@ def print_sockets(sockets):
     print(table)
 
 def print_protected(username, password):
-    if protected:
-        protectedtable = PrettyTable(field_names=["username", "password"])
-        protectedtable.align = "l"
-        protectedtable.border = True
-        protectedtable.add_row([str(username), str(password)])
-        print("\nProtected Socket, login details:")
-        print(protectedtable)
+    protectedtable = PrettyTable(field_names=["username", "password"])
+    protectedtable.align = "l"
+    protectedtable.border = True
+    protectedtable.add_row([str(username), str(password)])
+    print("\nProtected Socket, login details:")
+    print(protectedtable)
