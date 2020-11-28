@@ -33,7 +33,7 @@ def create_account(name, email, password, sshkey):
 @account.command()
 @click.option("--name", required=True, help="your name")
 @click.option("--email", required=True, help="your email")
-@click.option("--password", required=True, help="your pasword")
+@click.password_option("--password", required=True, help="your pasword")
 @click.option(
     "--sshkey",
     required=True,
@@ -41,6 +41,13 @@ def create_account(name, email, password, sshkey):
 )
 def create(name, email, password, sshkey):
     """Create your new mysocket.io account"""
+    try:
+        if os.path.exists(sshkey):
+            with open(sshkey, "r") as fp:
+                sshkey = fp.read()
+    except PermissionError:
+        print("Unable to read the file %s, please check file permissions and try again." % sshkey)
+        return
     register_result = create_account(name, email, password, sshkey)
     print(
         "Congratulation! your account has been created. A confirmation email has been sent to "

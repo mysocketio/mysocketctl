@@ -25,7 +25,7 @@ def get_token(user_email, user_pass):
 
 @login.command()
 @click.option("--email", required=True, help="your email")
-@click.option("--password", required=True, help="your pasword")
+@click.password_option("--password", required=True, help="your pasword")
 def login(email, password):
     """Login to mysocket and get a token"""
     token = get_token(email, password)["token"]
