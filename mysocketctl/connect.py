@@ -46,7 +46,7 @@ def new_connection(
 @click.option(
     "--type",
     required=False,
-    type=str,
+    type=click.Choice(["http", "https", "tcp", "tls"], case_sensitive=False),
     default="http",
     help="Socket type, http, https, tcp, tls",
 )
@@ -66,10 +66,6 @@ def connect(ctx, port, name, protected, username, password, type, engine):
             sys.exit(1)
     if not name:
         name = f"Local port {port}"
-    if type.lower() not in ["http", "https", "tcp", "tls"]:
-        print("--type should be either http, https, tcp or tls")
-        sys.exit(1)
-    type = type.lower()
 
     authorization_header = get_auth_header()
     new_conn = new_connection(

@@ -83,7 +83,7 @@ def ls():
 @click.option(
     "--type",
     required=False,
-    type=str,
+    type=click.Choice(["http", "https", "tcp", "tls"], case_sensitive=False),
     default="http",
     help="Socket type, http, https, tcp, tls",
 )
@@ -96,12 +96,6 @@ def create(name, protected, username, password, type):
         if not password:
             print("--password required when using --protected")
             sys.exit(1)
-    if not name:
-        name = ""
-    if type.lower() not in ["http", "https", "tcp", "tls"]:
-        print("--type should be either http, https, tcp or tls")
-        sys.exit(1)
-    type = type.lower()
 
     authorization_header = get_auth_header()
     socket = new_socket(
