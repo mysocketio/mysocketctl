@@ -95,7 +95,10 @@ def validate_response(http_repsonse):
 
     sys.exit(1)
 
-def ssh_tunnel(port, remote_bind_port, ssh_server, ssh_username, host="localhost", engine="auto"):
+
+def ssh_tunnel(
+    port, remote_bind_port, ssh_server, ssh_username, host="localhost", engine="auto"
+):
     print(f"\nConnecting to Server: {ssh_server}\n")
 
     while True:
@@ -126,6 +129,7 @@ def ssh_tunnel(port, remote_bind_port, ssh_server, ssh_username, host="localhost
             print("Bye")
             return
 
+
 def print_sockets(sockets):
     table = PrettyTable()
 
@@ -144,6 +148,7 @@ def print_sockets(sockets):
         table.add_row(row)
 
     print(table)
+
 
 def print_protected(username, password):
     protectedtable = PrettyTable(field_names=["username", "password"])
