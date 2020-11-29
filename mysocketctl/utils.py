@@ -48,7 +48,7 @@ def get_user_id():
         print("Could not read file:", token_file)
         print("Please login again")
         sys.exit(1)
-    print("No valid token in {token_file}. Please login again")
+    print(f"No valid token in {token_file}. Please login again")
 
 
 def get_auth_header():
@@ -74,7 +74,7 @@ def get_auth_header():
         print("Could not read file:", token_file)
         print("Please login again")
         sys.exit(1)
-    print("No valid token in {token_file}. Please login again")
+    print(f"No valid token in {token_file}. Please login again")
     sys.exit(1)
 
 
