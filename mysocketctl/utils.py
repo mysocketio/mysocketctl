@@ -48,7 +48,7 @@ def get_user_id():
         print("Could not read file:", token_file)
         print("Please login again")
         sys.exit(1)
-    print("No valid token in {token_file}. Please login again")
+    print(f"No valid token in {token_file}. Please login again")
 
 
 def get_auth_header():
@@ -74,7 +74,7 @@ def get_auth_header():
         print("Could not read file:", token_file)
         print("Please login again")
         sys.exit(1)
-    print("No valid token in {token_file}. Please login again")
+    print(f"No valid token in {token_file}. Please login again")
     sys.exit(1)
 
 
@@ -95,7 +95,10 @@ def validate_response(http_repsonse):
 
     sys.exit(1)
 
-def ssh_tunnel(port, remote_bind_port, ssh_server, ssh_username, host="localhost", engine="auto"):
+
+def ssh_tunnel(
+    port, remote_bind_port, ssh_server, ssh_username, host="localhost", engine="auto"
+):
     print(f"\nConnecting to Server: {ssh_server}\n")
 
     while True:
@@ -126,6 +129,7 @@ def ssh_tunnel(port, remote_bind_port, ssh_server, ssh_username, host="localhost
             print("Bye")
             return
 
+
 def print_sockets(sockets):
     table = PrettyTable()
 
@@ -144,6 +148,7 @@ def print_sockets(sockets):
         table.add_row(row)
 
     print(table)
+
 
 def print_protected(username, password):
     protectedtable = PrettyTable(field_names=["username", "password"])

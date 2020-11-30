@@ -56,6 +56,7 @@ def ls():
     sockets = get_sockets(authorization_header)
     print_sockets(sockets)
 
+
 @socket.command()
 @click.option("--name", required=True, type=str)
 @click.option("--protected/--not-protected", default=False)

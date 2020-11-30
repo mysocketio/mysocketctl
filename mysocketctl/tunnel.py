@@ -54,6 +54,7 @@ def delete_tunnel(authorization_header, socket_id, tunnel_id):
     validate_response(api_answer)
     return api_answer
 
+
 def print_tunnels(tunnels, socket_id):
     table = PrettyTable(
         field_names=["socket_id", "tunnel_id", "tunnel_server", "relay_port"]
