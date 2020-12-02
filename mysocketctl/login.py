@@ -33,4 +33,5 @@ def login(email, password):
     f = open(token_file, "w")
     f.write(token)
     f.close()
+    os.chmod(token_file, 0o600)
     print(f"Logged in! Token stored in {token_file}\n")
