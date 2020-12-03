@@ -7,7 +7,11 @@ class SystemSSH(object):
 
     def is_enabled(self):
         try:
-            subprocess.run([self.ssh_path, "-V"], capture_output=True)
+            subprocess.run(
+                [self.ssh_path, "-V"],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
             return True
         except FileNotFoundError:
             pass
