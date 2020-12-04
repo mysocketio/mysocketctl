@@ -1,6 +1,6 @@
 import json
 import unittest
-from unittest.mock import patch, mock_open
+from unittest.mock import patch
 
 import mysocketctl.socket
 import utils
@@ -45,14 +45,14 @@ def socket_delete(url, request):
     return response(200)
 
 
-@patch("mysocketctl.utils.open", new_callable=mock_open, read_data=utils.make_jwt())
+@patch("mysocketctl.utils.open", new_callable=utils.iterable_mock_open, read_data=utils.make_jwt())
 class TestGetSockets(unittest.TestCase):
     @with_httmock(get_sockets)
     def test_success(self, tokenfile):
         mysocketctl.socket.get_sockets(None)
 
 
-@patch("mysocketctl.utils.open", new_callable=mock_open, read_data=utils.make_jwt())
+@patch("mysocketctl.utils.open", new_callable=utils.iterable_mock_open, read_data=utils.make_jwt())
 class TestSockets(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

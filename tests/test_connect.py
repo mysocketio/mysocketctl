@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch, mock_open
+from unittest.mock import patch
 
 import utils
 
@@ -26,7 +26,7 @@ def connect(url, request):
     )
 
 
-@patch("mysocketctl.utils.open", new_callable=mock_open, read_data=utils.make_jwt())
+@patch("mysocketctl.utils.open", new_callable=utils.iterable_mock_open, read_data=utils.make_jwt())
 class TestConnect(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

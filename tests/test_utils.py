@@ -1,7 +1,7 @@
 import os
 import unittest
 from io import StringIO
-from unittest.mock import patch, mock_open
+from unittest.mock import patch
 from time import time
 
 import jwt
@@ -69,7 +69,7 @@ class TestValidateResponse(unittest.TestCase):
 class TestAuthHeader(unittest.TestCase):
     @patch(
         "mysocketctl.utils.open",
-        new_callable=mock_open,
+        new_callable=utils.iterable_mock_open,
         read_data=jwt.encode({"user_id": "A", "exp": time() + 24 * 60 * 60}, "NotSecret"),
     )
     def test_valid_token(self, tokenfile, *args):
@@ -80,7 +80,7 @@ class TestAuthHeader(unittest.TestCase):
 
     @patch(
         "mysocketctl.utils.open",
-        new_callable=mock_open,
+        new_callable=utils.iterable_mock_open,
         read_data="This is Not a JWT Token",
     )
     def test_invalid_token(self, tokenfile, stdout):
@@ -95,10 +95,11 @@ class TestAuthHeader(unittest.TestCase):
     @patch("mysocketctl.utils.open", side_effect=PermissionError)
     def test_file_perms(self, tokenfile, stdout):
         self.assertRaises(SystemExit, mysocketctl.utils.get_auth_header)
+        tokenfile.assert_called_once()
         self.assertIn("Could not read file:", stdout.getvalue())
 
 
-@patch("mysocketctl.utils.open", new_callable=mock_open, read_data=utils.make_jwt())
+@patch("mysocketctl.utils.open", new_callable=utils.iterable_mock_open, read_data=utils.make_jwt())
 class TestGetUserId(unittest.TestCase):
     def test_getuserid(self, tokenfile):
         self.assertIsNotNone(mysocketctl.utils.get_user_id())

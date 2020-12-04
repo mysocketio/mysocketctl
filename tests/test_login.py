@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import patch, mock_open
+from unittest.mock import patch
 
 import utils
 from httmock import urlmatch, with_httmock, response
@@ -27,7 +27,7 @@ def server_error(url, request):
     return response(SERVER_ERR_CODE, SERVER_ERR_MESG)
 
 
-@patch("mysocketctl.utils.open", new_callable=mock_open, read_data=utils.make_jwt())
+@patch("mysocketctl.utils.open", new_callable=utils.iterable_mock_open, read_data=utils.make_jwt())
 class TestLogin(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -44,7 +44,7 @@ class TestLogin(unittest.TestCase):
         self.assertNotEqual(result.exit_code, 0)
 
     @with_httmock(valid_login)
-    @patch("mysocketctl.login.open", new_callable=mock_open)
+    @patch("mysocketctl.login.open", new_callable=utils.iterable_mock_open)
     def test_valid_login(self, write_token, *args):
         result = self.runner.invoke(login, ["--email", "X", "--password", "Y"])
         write_token.assert_called_once()

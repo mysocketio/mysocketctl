@@ -1,6 +1,6 @@
 import unittest
 import mysocketctl.account
-from unittest.mock import patch, mock_open
+from unittest.mock import patch
 
 import utils
 from httmock import urlmatch, with_httmock, response
@@ -33,10 +33,7 @@ class TestUtilityFunctions(unittest.TestCase):
         )
 
 
-mock_key = mock_open(read_data="NotARealKey")
-
-
-@patch("mysocketctl.utils.open", new_callable=mock_open, read_data=utils.make_jwt())
+@patch("mysocketctl.utils.open", new_callable=utils.iterable_mock_open, read_data=utils.make_jwt())
 class TestAccount(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -63,7 +60,9 @@ class TestAccount(unittest.TestCase):
 
     @with_httmock(account)
     @patch("os.path.exists", return_value=True)
-    @patch("mysocketctl.account.open", new_callable=mock_open, read_data="NotARealKey")
+    @patch(
+        "mysocketctl.account.open", new_callable=utils.iterable_mock_open, read_data="NotARealKey"
+    )
     def test_create_with_file(self, mopen, *args):
         result = self.runner.invoke(
             mysocketctl.account.account,
