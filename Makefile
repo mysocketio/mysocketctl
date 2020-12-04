@@ -8,4 +8,4 @@ install:
 	twine upload dist/*
 
 test:
-	@tox -e py3
+	@tox -e py3,coverage,lint
