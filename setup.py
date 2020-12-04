@@ -15,7 +15,7 @@ setup(
     author_email="andree@mysocket.io",
     install_requires=["Click", "requests", "pyjwt", "prettytable", "paramiko"],
     python_requires=">=3.6",
-    extras_requires={
+    extras_require={
         "test": test_deps,
     },
     test_requires=test_deps,
