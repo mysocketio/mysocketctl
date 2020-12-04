@@ -1,13 +1,9 @@
-import click
-import json
 import os
-import requests
 import sys
+import time
 import jwt
-import time, sys
 
 from prettytable import PrettyTable
-
 from mysocketctl.ssh import SystemSSH, Paramiko
 
 api_url = "https://api.mysocket.io/"
@@ -16,7 +12,7 @@ token_file = os.path.expanduser(os.path.join("~", ".mysocketio_token"))
 
 # For debug
 debug = False
-if "MYSOCKET_DEBUG" in os.environ:
+if "MYSOCKET_DEBUG" in os.environ:  # pragma: no cover
     if os.environ["MYSOCKET_DEBUG"] == "TRUE":
         try:
             import http.client as http_client
@@ -28,58 +24,43 @@ if "MYSOCKET_DEBUG" in os.environ:
         debug = True
 
 
-def get_user_id():
+def read_token_file(want_token=True):
     try:
         with open(token_file, "r") as myfile:
-
             for token in myfile:
                 token = token.strip()
                 try:
                     data = jwt.decode(token, verify=False)
-                except:
+                    return token if want_token else data
+                except (TypeError, jwt.InvalidTokenError):
                     print(f"barf on {token}")
-                    data = jwt.decode(token, verify=False)
                     continue
-
-                if "user_id" in data:
-                    return data["user_id"]
-
     except IOError:
         print("Could not read file:", token_file)
         print("Please login again")
         sys.exit(1)
-    print(f"No valid token in {token_file}. Please login again")
 
-
-def get_auth_header():
-    try:
-        with open(token_file, "r") as myfile:
-
-            for token in myfile:
-                token = token.strip()
-                try:
-                    data = jwt.decode(token, verify=False)
-                except:
-                    print("barf on {token}")
-                    data = jwt.decode(token, verify=False)
-                    continue
-
-                authorization_header = {
-                    "x-access-token": token,
-                    "accept": "application/json",
-                    "Content-Type": "application/json",
-                }
-                return authorization_header
-    except IOError:
-        print("Could not read file:", token_file)
-        print("Please login again")
-        sys.exit(1)
     print(f"No valid token in {token_file}. Please login again")
     sys.exit(1)
 
 
+def get_user_id():
+    return read_token_file(False)["user_id"]
+
+
+def get_auth_header():
+    token = read_token_file()
+
+    authorization_header = {
+        "x-access-token": token,
+        "accept": "application/json",
+        "Content-Type": "application/json",
+    }
+    return authorization_header
+
+
 def validate_response(http_repsonse):
-    if debug == True:
+    if debug:  # pragma: no cover
         print("Server responded with data:")
         print(http_repsonse.text)
 
@@ -96,20 +77,18 @@ def validate_response(http_repsonse):
     sys.exit(1)
 
 
-def ssh_tunnel(
-    port, remote_bind_port, ssh_server, ssh_username, host="localhost", engine="auto"
-):
+def ssh_tunnel(port, remote_bind_port, ssh_server, ssh_username, host="localhost", engine="auto"):
     print(f"\nConnecting to Server: {ssh_server}\n")
 
     while True:
         if engine == "auto":
             for ssh in [SystemSSH, Paramiko]:
                 client = ssh()
-                if ssh().is_enabled():
+                if client.is_enabled():
                     break
         elif engine == "system":
             client = SystemSSH()
-            if not SystemSSH().is_enabled():
+            if not client.is_enabled():
                 print("System SSH does not appear to be avaiable")
                 return
         elif engine == "paramiko":
@@ -150,7 +129,7 @@ def print_sockets(sockets):
     print(table)
 
 
-def print_protected(username, password):
+def print_protected(username, password):  # pragma: no cover
     protectedtable = PrettyTable(field_names=["username", "password"])
     protectedtable.align = "l"
     protectedtable.border = True

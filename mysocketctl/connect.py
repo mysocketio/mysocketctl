@@ -1,11 +1,14 @@
+import json
+import time
 import click
-
 import mysocketctl.socket
+import requests
+
 from mysocketctl.utils import *
 
 
 @click.group()
-def connect():
+def connect():  # pragma: no cover
     """Quckly connect. Wrapper around sockets and tunnels"""
     pass
 
@@ -18,11 +21,6 @@ def new_connection(
     protected_pass,
     socket_type,
 ):
-    if not protected_socket:
-        protected_socket = False
-    else:
-        protected_socket = True
-
     params = {
         "name": connect_name,
         "protected_socket": protected_socket,
@@ -50,20 +48,16 @@ def new_connection(
     default="http",
     help="Socket type, http, https, tcp, tls",
 )
-@click.option(
-    "--engine", default="auto", type=click.Choice(("auto", "system", "paramiko"))
-)
+@click.option("--engine", default="auto", type=click.Choice(("auto", "system", "paramiko")))
 @click.pass_context
 def connect(ctx, port, name, protected, username, password, type, engine):
     """Quckly connect, Wrapper around sockets and tunnels"""
 
     if protected:
         if not username:
-            print("--username required when using --protected")
-            sys.exit(1)
+            ctx.fail("--username required when using --protected")
         if not password:
-            print("--password required when using --protected")
-            sys.exit(1)
+            ctx.fail("--password required when using --protected")
     if not name:
         name = f"Local port {port}"
 
@@ -77,7 +71,7 @@ def connect(ctx, port, name, protected, username, password, type, engine):
     ssh_user = str(new_conn["user_name"])
 
     print_sockets([new_conn])
-    if protected:
+    if protected:  # pragma: no cover
         print_protected(username, password)
 
     time.sleep(2)
