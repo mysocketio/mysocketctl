@@ -17,11 +17,17 @@ def new_connection(
     protected_user,
     protected_pass,
     socket_type,
+    cloudauth,
 ):
     if not protected_socket:
         protected_socket = False
     else:
         protected_socket = True
+
+    if not cloudauth:
+        cloudauth = False
+    else:
+        cloudauth = True
 
     params = {
         "name": connect_name,
@@ -29,6 +35,7 @@ def new_connection(
         "protected_username": protected_user,
         "protected_password": protected_pass,
         "socket_type": socket_type,
+        "cloud_authentication": cloudauth,
     }
     api_answer = requests.post(
         api_url + "connect", data=json.dumps(params), headers=authorization_header
@@ -44,6 +51,9 @@ def new_connection(
 @click.option("--username", required=False, type=str, default="")
 @click.option("--password", required=False, type=str, default="")
 @click.option(
+    "--cloudauth/--no-cloudauth", default=False, help="Enable oauth/oidc authentication"
+)
+@click.option(
     "--type",
     required=False,
     type=click.Choice(["http", "https", "tcp", "tls"], case_sensitive=False),
@@ -54,8 +64,13 @@ def new_connection(
     "--engine", default="auto", type=click.Choice(("auto", "system", "paramiko"))
 )
 @click.pass_context
-def connect(ctx, port, name, protected, username, password, type, engine):
+def connect(ctx, port, name, protected, username, password, type, engine, cloudauth):
     """Quckly connect, Wrapper around sockets and tunnels"""
+
+    if cloudauth:
+        cloudauth = True
+    else:
+        cloudauth = False
 
     if protected:
         if not username:
@@ -69,7 +84,13 @@ def connect(ctx, port, name, protected, username, password, type, engine):
 
     authorization_header = get_auth_header()
     new_conn = new_connection(
-        authorization_header, name, protected, str(username), str(password), str(type)
+        authorization_header,
+        name,
+        protected,
+        str(username),
+        str(password),
+        str(type),
+        cloudauth,
     )
     remote_bind_port = new_conn["tunnels"][0]["local_port"]
     ssh_server = new_conn["tunnels"][0]["tunnel_server"]

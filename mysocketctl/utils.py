@@ -135,7 +135,14 @@ def print_sockets(sockets):
 
     table.align = "l"
     table.border = True
-    table.field_names = ["socket_id", "dns_name", "port(s)", "type", "name"]
+    table.field_names = [
+        "socket_id",
+        "dns_name",
+        "port(s)",
+        "type",
+        "cloud auth",
+        "name",
+    ]
     for socket in sockets:
         ports_str = " ".join([str(elem) for elem in socket["socket_tcp_ports"]])
         row = [
@@ -143,6 +150,7 @@ def print_sockets(sockets):
             socket["dnsname"],
             ports_str,
             socket["socket_type"],
+            socket["cloud_authentication"],
             socket["name"],
         ]
         table.add_row(row)
