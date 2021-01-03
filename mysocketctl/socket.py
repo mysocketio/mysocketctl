@@ -70,7 +70,9 @@ def ls():
 @click.option("--protected/--not-protected", default=False)
 @click.option("--username", required=False, type=str, default="")
 @click.option("--password", required=False, type=str, default="")
-@click.option("--cloudauth/--no-cloudauth", default=False, help="Enable oauth/oidc authentication")
+@click.option(
+    "--cloudauth/--no-cloudauth", default=False, help="Enable oauth/oidc authentication"
+)
 @click.option(
     "--type",
     required=False,
@@ -95,7 +97,13 @@ def create(name, protected, username, password, type, cloudauth):
 
     authorization_header = get_auth_header()
     socket = new_socket(
-        authorization_header, name, protected, str(username), str(password), str(type), cloudauth
+        authorization_header,
+        name,
+        protected,
+        str(username),
+        str(password),
+        str(type),
+        cloudauth,
     )
 
     print_sockets([socket])

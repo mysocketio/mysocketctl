@@ -50,7 +50,9 @@ def new_connection(
 @click.option("--protected/--not-protected", default=False)
 @click.option("--username", required=False, type=str, default="")
 @click.option("--password", required=False, type=str, default="")
-@click.option("--cloudauth/--no-cloudauth", default=False, help="Enable oauth/oidc authentication")
+@click.option(
+    "--cloudauth/--no-cloudauth", default=False, help="Enable oauth/oidc authentication"
+)
 @click.option(
     "--type",
     required=False,
@@ -82,7 +84,13 @@ def connect(ctx, port, name, protected, username, password, type, engine, clouda
 
     authorization_header = get_auth_header()
     new_conn = new_connection(
-        authorization_header, name, protected, str(username), str(password), str(type),cloudauth
+        authorization_header,
+        name,
+        protected,
+        str(username),
+        str(password),
+        str(type),
+        cloudauth,
     )
     remote_bind_port = new_conn["tunnels"][0]["local_port"]
     ssh_server = new_conn["tunnels"][0]["tunnel_server"]
