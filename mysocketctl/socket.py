@@ -22,7 +22,14 @@ def new_socket(
     protected_user,
     protected_pass,
     socket_type,
+    cloudauth,
 ):
+
+    if not cloudauth:
+        cloudauth = False
+    else:
+        cloudauth = True
+
     if not protected_socket:
         protected_socket = False
     else:
@@ -34,6 +41,7 @@ def new_socket(
         "protected_username": protected_user,
         "protected_password": protected_pass,
         "socket_type": socket_type,
+        "cloud_authentication": cloudauth,
     }
     api_answer = requests.post(
         api_url + "socket", data=json.dumps(params), headers=authorization_header
@@ -62,6 +70,7 @@ def ls():
 @click.option("--protected/--not-protected", default=False)
 @click.option("--username", required=False, type=str, default="")
 @click.option("--password", required=False, type=str, default="")
+@click.option("--cloudauth/--no-cloudauth", default=False, help="Enable oauth/oidc authentication")
 @click.option(
     "--type",
     required=False,
@@ -69,7 +78,12 @@ def ls():
     default="http",
     help="Socket type, http, https, tcp, tls",
 )
-def create(name, protected, username, password, type):
+def create(name, protected, username, password, type, cloudauth):
+
+    if cloudauth:
+        cloudauth = True
+    else:
+        cloudauth = False
 
     if protected:
         if not username:
@@ -81,7 +95,7 @@ def create(name, protected, username, password, type):
 
     authorization_header = get_auth_header()
     socket = new_socket(
-        authorization_header, name, protected, str(username), str(password), str(type)
+        authorization_header, name, protected, str(username), str(password), str(type), cloudauth
     )
 
     print_sockets([socket])
