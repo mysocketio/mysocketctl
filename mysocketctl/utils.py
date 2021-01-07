@@ -150,7 +150,7 @@ def print_sockets(sockets):
             socket["dnsname"],
             ports_str,
             socket["socket_type"],
-            socket["cloud_authentication"],
+            socket["cloud_authentication_enabled"],
             socket["name"],
         ]
         table.add_row(row)

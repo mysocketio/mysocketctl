@@ -35,7 +35,7 @@ def new_connection(
         "protected_username": protected_user,
         "protected_password": protected_pass,
         "socket_type": socket_type,
-        "cloud_authentication": cloudauth,
+        "cloud_authentication_enabled": cloudauth,
     }
     api_answer = requests.post(
         api_url + "connect", data=json.dumps(params), headers=authorization_header

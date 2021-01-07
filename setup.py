@@ -5,7 +5,7 @@ setup(
     packages=find_packages(),
     # include_package_data=True,
     license="Apache Software License",
-    version="0.9",
+    version="0.10",
     description="CLI tool for mysocket.io",
     long_description=open("README.rst").read(),
     url="https://github.com/mysocketio/mysocketctl",
