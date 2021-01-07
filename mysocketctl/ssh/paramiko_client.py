@@ -9,13 +9,13 @@ from paramiko.client import AutoAddPolicy
 
 
 class LogOutput(threading.Thread):
-    def __init__(self, sock):
-        self.event = threading.Event()
+    def __init__(self, sock, event):
+        self._event = event
         self._sock = sock
         super().__init__(daemon=True)
 
     def run(self):
-        while not self.event.is_set():
+        while not self._event.is_set():
             try:
                 data = self._sock.recv(1024)
             except Exception as e:
@@ -29,6 +29,7 @@ class LogOutput(threading.Thread):
                 break
             sys.stdout.write(data.decode("UTF-8"))
             sys.stdout.flush()
+        self._event.set()
         self._sock.close()
 
 
@@ -75,6 +76,7 @@ class ForwardingThread(threading.Thread):
 
 class Paramiko(object):
     def __init__(self):
+        self.event = threading.Event()
         self.client = SSHClient()
         self.client.set_missing_host_key_policy(AutoAddPolicy)
 
@@ -85,7 +87,7 @@ class Paramiko(object):
         transport = self.client.get_transport()
         transport.set_keepalive(30)
         transport.request_port_forward("localhost", server_port)
-        while True:
+        while not self.event.is_set():
             # Wait 10 seconds for a new client
             chan = transport.accept(10)
             # Check if we have an exception in the transport
@@ -112,7 +114,8 @@ class Paramiko(object):
             return
 
         log_thread = LogOutput(
-            self.client.invoke_shell(term=os.environ.get("TERM", "vt100"))
+            self.client.invoke_shell(term=os.environ.get("TERM", "vt100")),
+            self.event
         )
         log_thread.start()
 
@@ -127,5 +130,5 @@ class Paramiko(object):
             sys.stderr.flush()
 
         self.client.close()
-        log_thread.event.set()
+        self.event.set()
         log_thread.join()
