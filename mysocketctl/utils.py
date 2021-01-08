@@ -165,3 +165,16 @@ def print_protected(username, password):
     protectedtable.add_row([str(username), str(password)])
     print("\nProtected Socket, login details:")
     print(protectedtable)
+
+
+def print_cloudauth(allowed_email_addresses_list, allowed_email_domain_list):
+    email_string = "\n".join(allowed_email_addresses_list)
+    domain_string = "\n".join(allowed_email_domain_list)
+    protectedtable = PrettyTable(
+        field_names=["Allowed email addresses", "Allowed email domains"]
+    )
+    protectedtable.align = "l"
+    protectedtable.border = True
+    protectedtable.add_row([str(email_string), str(domain_string)])
+    print("\nCloud Authentication, login details:")
+    print(protectedtable)
