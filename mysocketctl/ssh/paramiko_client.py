@@ -114,8 +114,7 @@ class Paramiko(object):
             return
 
         log_thread = LogOutput(
-            self.client.invoke_shell(term=os.environ.get("TERM", "vt100")),
-            self.event
+            self.client.invoke_shell(term=os.environ.get("TERM", "vt100")), self.event
         )
         log_thread.start()
 
