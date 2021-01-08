@@ -1,4 +1,5 @@
-Warning: binary versions not actively updated, and this is not actively maintained.
+Warning: binary versions are not actively updated, and this is not actively maintained. This is a one off snapshot of [version 0.13](https://pypi.org/project/mysocketctl/0.13/)
+
 
 To download:
 ```
