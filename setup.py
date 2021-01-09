@@ -5,7 +5,7 @@ setup(
     packages=find_packages(),
     # include_package_data=True,
     license="Apache Software License",
-    version="0.13",
+    version="0.14",
     description="CLI tool for mysocket.io",
     long_description=open("README.rst").read(),
     url="https://github.com/mysocketio/mysocketctl",
@@ -14,7 +14,7 @@ setup(
     install_requires=[
         "Click",
         "requests",
-        "pyjwt",
+        "pyjwt==1.7.1",
         "prettytable",
         "paramiko",
         "validate_email",
