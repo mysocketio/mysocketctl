@@ -102,7 +102,7 @@ def delete(socket_id, tunnel_id):
 @click.option("--socket_id", required=True, type=str)
 @click.option("--tunnel_id", required=True, type=str)
 @click.option("--port", required=True, type=str)
-@click.option("--host", hidden=True, type=str, default="localhost")
+@click.option("--host", hidden=False, type=str, default="127.0.0.1", help="Control where inbound traffic goes. Default localhost.")
 @click.option(
     "--engine", default="auto", type=click.Choice(("auto", "system", "paramiko"))
 )
