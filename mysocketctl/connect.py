@@ -56,6 +56,13 @@ def new_connection(
 @click.option("--username", required=False, type=str, default="")
 @click.option("--password", required=False, type=str, default="")
 @click.option(
+    "--host",
+    required=False,
+    type=str,
+    default="127.0.0.1",
+    help="Control where inbound traffic goes. Default localhost. ",
+)
+@click.option(
     "--cloudauth/--no-cloudauth", default=False, help="Enable oauth/oidc authentication"
 )
 @click.option(
@@ -90,6 +97,7 @@ def connect(
     protected,
     username,
     password,
+    host,
     type,
     engine,
     cloudauth,
@@ -158,6 +166,6 @@ def connect(
         print_cloudauth(allowed_email_addresses_list, allowed_email_domain_list)
 
     time.sleep(2)
-    ssh_tunnel(port, remote_bind_port, ssh_server, ssh_user, engine=engine)
+    ssh_tunnel(port, remote_bind_port, ssh_server, ssh_user, host=host, engine=engine)
     print("cleaning up...")
     ctx.invoke(mysocketctl.socket.delete, socket_id=new_conn["socket_id"])
